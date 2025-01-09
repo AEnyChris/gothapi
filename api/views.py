@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -9,18 +8,31 @@ from rest_framework import generics
 
 # Create your views here.
 @api_view(['GET'])
-def api_root(request, format=None):
+def api_root(request, fmt=None):
+    """
+    Root of the API, providing links to all resources.
+    """
     return Response({
-        'people': reverse('people-list', request=request, format=format),
-        'houses': reverse('house-list', request=request, format=format),
-        'places': reverse('place-list', request=request, format=format),
-        'dragons': reverse('dragon-list', request=request, format=format),
-        'seasons': reverse('season-list', request=request, format=format),
-        'episodes': reverse('episode-list', request=request, format=format)
+        'people': reverse('people-list', request=request, format=fmt),
+        'houses': reverse('house-list', request=request, format=fmt),
+        'places': reverse('place-list', request=request, format=fmt),
+        'dragons': reverse('dragon-list', request=request, format=fmt),
+        'seasons': reverse('season-list', request=request, format=fmt),
+        'episodes': reverse('episode-list', request=request, format=fmt)
     })
 
 @api_view(['GET'])
 def resources_stats(request, format=None):
+    """
+    Retrieve the count of various resources in the database.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        format (str, optional): The format of the response. Defaults to None.
+
+    Returns:
+        Response: A JSON response containing the count of People, House, Place, Dragon, Season, and Episode objects.
+    """
     return Response({
         'People': People.objects.count(),
         'House': House.objects.count(),
@@ -31,6 +43,9 @@ def resources_stats(request, format=None):
     })
 
 class PeopleList(generics.ListAPIView):
+    """
+    API view to retrieve list of people.
+    """
     queryset = People.objects.all()
     serializer_class = PeopleSerializer
 
