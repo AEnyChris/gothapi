@@ -166,7 +166,6 @@ class Season(Base):
 class Episode(Base):
     """
     Represents an episode of the Game of Thrones TV show.
-
     Attributes:
         title (string): The title of the episode.
         num_in_season (int): The episode number within the season.

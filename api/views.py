@@ -1,37 +1,19 @@
 from rest_framework.decorators import api_view
+from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.reverse import reverse
+from rest_framework.views import APIView
+from rest_framework.renderers import TemplateHTMLRenderer
 from api.models import *
 from api.serializers import *
-from rest_framework import generics
-
+from django.shortcuts import render
 
 # Create your views here.
-@api_view(['GET'])
-def api_root(request, fmt=None):
-    """
-    Root of the API, providing links to all resources.
-    """
-    return Response({
-        'people': reverse('people-list', request=request, format=fmt),
-        'houses': reverse('house-list', request=request, format=fmt),
-        'places': reverse('place-list', request=request, format=fmt),
-        'dragons': reverse('dragon-list', request=request, format=fmt),
-        'seasons': reverse('season-list', request=request, format=fmt),
-        'episodes': reverse('episode-list', request=request, format=fmt)
-    })
-
 @api_view(['GET'])
 def resources_stats(request, format=None):
     """
     Retrieve the count of various resources in the database.
-
-    Args:
-        request (HttpRequest): The HTTP request object.
-        format (str, optional): The format of the response. Defaults to None.
-
     Returns:
-        Response: A JSON response containing the count of People, House, Place, Dragon, Season, and Episode objects.
+        Response: A JSON response containing the count of each resource
     """
     return Response({
         'People': People.objects.count(),
@@ -42,53 +24,43 @@ def resources_stats(request, format=None):
         'Episode': Episode.objects.count()
     })
 
-class PeopleList(generics.ListAPIView):
+
+# def homepage(request):
+#     return render(request, 'rest_framework/home.html')
+
+class HomePage(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'rest_framework/home.html'
+
+    def get(self, request):
+        queryset = People.objects.all()
+        return Response({'people': queryset})
+
+class PeopleViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    API view to retrieve list of people.
+    Provides `list` and `retrieve` actions for  the People resource.
     """
     queryset = People.objects.all()
     serializer_class = PeopleSerializer
+    
 
-class PeopleDetail(generics.RetrieveAPIView):
-    queryset = People.objects.all()
-    serializer_class = PeopleSerializer
 
-class HouseList(generics.ListAPIView):
+class HouseViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = House.objects.all()
     serializer_class = HouseSerializer
 
-class HouseDetail(generics.RetrieveAPIView):
-    queryset = House.objects.all()
-    serializer_class = HouseSerializer
-
-class PlaceList(generics.ListAPIView):
+class PlaceViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Place.objects.all()
     serializer_class = PlaceSerializer
 
-class PlaceDetail(generics.RetrieveAPIView):
-    queryset = Place.objects.all()
-    serializer_class = PlaceSerializer
-
-class DragonList(generics.ListAPIView):
+class DragonViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Dragon.objects.all()
     serializer_class = DragonSerializer
 
-class DragonDetail(generics.RetrieveAPIView):
-    queryset = Dragon.objects.all()
-    serializer_class = DragonSerializer
-
-class SeasonList(generics.ListAPIView):
+class SeasonViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Season.objects.all()
     serializer_class = SeasonSerializer
 
-class SeasonDetail(generics.RetrieveAPIView):
-    queryset = Season.objects.all()
-    serializer_class = SeasonSerializer
-
-class EpisodeList(generics.ListAPIView):
-    queryset = Episode.objects.all()
-    serializer_class = EpisodeSerializer
-
-class EpisodeDetail(generics.RetrieveAPIView):
+class EpisodeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Episode.objects.all()
     serializer_class = EpisodeSerializer

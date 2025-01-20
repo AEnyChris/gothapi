@@ -51,7 +51,7 @@ class PlaceSerializer(serializers.HyperlinkedModelSerializer):
     Serializer for the Place model.
     """
     seat_of = serializers.HyperlinkedRelatedField(
-        many=True, view_name='house-detail', read_only=True)
+        many=False, view_name='house-detail', read_only=True)
     ruled_by = serializers.HyperlinkedRelatedField(
         many=True, view_name='house-detail', read_only=True)
 
