@@ -59,10 +59,10 @@ class People(Base):
     houseled = models.ForeignKey('House', on_delete=models.CASCADE,
                                  null=True, related_name='heads')
     parents = models.ManyToManyField('self', symmetrical=False,
-                                     related_name='children')
-    siblings = models.ManyToManyField('self', symmetrical=True)
+                                     related_name='children', default=[])
+    siblings = models.ManyToManyField('self', symmetrical=True, default=[])
     death = models.CharField(max_length=2048, default='', blank=True)
-    episodes = models.ManyToManyField('Episode', related_name='characters')
+    episodes = models.ManyToManyField('Episode', related_name='characters', default=[])
 
     def __str__(self):
         return f"{self.id} {self.name}"
@@ -82,11 +82,11 @@ class House(Base):
     """
     name = models.CharField(max_length=50)
     sigil = models.CharField(max_length=1024, default='', blank=True)
-    members = models.ManyToManyField('People', related_name='allegiances')
-    word = models.CharField(max_length=1024)
+    members = models.ManyToManyField('People', related_name='allegiances', default=[])
+    word = models.CharField(max_length=1024, default='', blank=True)
     seat = models.OneToOneField('Place', on_delete=models.CASCADE, null=True,
                                 related_name='seat_of')
-    places_ruled = models.ManyToManyField('Place',  related_name='ruled_by')
+    places_ruled = models.ManyToManyField('Place',  related_name='ruled_by', default=[])
 
     def __str__(self):
         return f"{self.id} {self.name}"
@@ -129,12 +129,12 @@ class Dragon(Base):
     original_rider = models.ForeignKey('People', on_delete=models.CASCADE,
                                        related_name='dragons_owned',
                                        null=True)
-    riders = models.ManyToManyField('People', related_name='dragons_ridden')
+    riders = models.ManyToManyField('People', related_name='dragons_ridden', default=[])
     color = models.CharField(max_length=50, default='', blank=True)
     size = models.CharField(max_length=1024, default='', blank=True)
     facts = models.CharField(max_length=2048, default='', blank=True)
     death = models.CharField(max_length=2048, default='', blank=True)
-    episodes = models.ManyToManyField('Episode', related_name='dragons')
+    episodes = models.ManyToManyField('Episode', related_name='dragons', default=[])
 
     def __str__(self):
         return f"{self.id} {self.name}"
@@ -153,7 +153,7 @@ class Season(Base):
         budget (float): The budget of the season.
     """
     number = models.IntegerField()
-    number_of_episodes = models.IntegerField()
+    number_of_episodes = models.IntegerField(default=0)
     premiere_date = models.DateField(null=True)
     show_period = models.CharField(max_length=50, default='', blank=True)
     rating = models.FloatField(null=True)
@@ -180,14 +180,14 @@ class Episode(Base):
         season (Season): The season to which the episode belongs.
     """
     title = models.CharField(max_length=1024)
-    num_in_season = models.IntegerField(null=True)
-    num_overall = models.IntegerField(null=True)
+    num_in_season = models.IntegerField()
+    num_overall = models.IntegerField(default=0)
     director = models.CharField(max_length=50, default='', blank=True)
     written_by = models.CharField(max_length=50, default='', blank=True)
-    original_air_date = models.DateField()
+    original_air_date = models.DateField(null=True)
     synopsis = models.CharField(max_length=2048, default='',
                                 blank=True)
-    runtime = models.IntegerField()
+    runtime = models.IntegerField(default=0)
     rating = models.FloatField(null=True)
     budget = models.FloatField(null=True)
     season = models.ForeignKey('Season', on_delete=models.CASCADE,

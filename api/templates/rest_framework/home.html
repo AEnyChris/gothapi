@@ -34,6 +34,7 @@
     display: grid;
     justify-content: center;
     align-items: center;
+    border: 1px solid black;
   }
 
 </style>
@@ -87,6 +88,7 @@
           })
       })
     })()
+    
   </script>
 {% endblock %}
 
@@ -129,24 +131,17 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="https://www.django-rest-framework.org/tutorial/quickstart/"
+                  <a href="https://github.com/AEnyChris/gothapi/blob/master/README.md"
                     class="nav-link d-flex align-items-center gap-3">
                     <i class="bi bi-journal-code"></i>
-                    {% translate "Tutorial" %}
+                    {% translate "Documentation" %}
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="https://github.com/encode/django-rest-framework/"
+                  <a href="https://github.com/AEnyChris/gothapi.git"
                     class="nav-link d-flex align-items-center gap-3">
                     <i class="bi bi-github"></i>
                     {% translate "Github" %}
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="https://github.com/youzarsiph/rest-framework-redesign/"
-                    class="nav-link d-flex align-items-center gap-3">
-                    <i class="bi bi-code-slash"></i>
-                    {% translate "Redesign" %}
                   </a>
                 </li>
               </ul>
@@ -227,50 +222,47 @@
 
 
 {% block content %}
-  <body class="container">
+  <body class="container-md">
+    
     <section>
-      <div class="d-grid justify-content-center gap-2 p-5">
-        <h3 class="display-3" style="text-align: center;">{% translate "gothapi" %}</h3>
-        <div><h5 style="text-align: center;" class="display-6">An API for <em>Game of Thrones</em> TVSeries</h5></div>
-        <p>gothapi is an Open API providing all the data from the <em>Game of Thrones</em> TV series</p>
+      <div class="d-grid justify-content-center gap-2 p-5 position-relative">
+        <div class="d-flex justify-content-end align-item-center position-absolute top-50 start-100 translate-middle-x">
+          <button class="btn btn-primary" id="audioButton">Play soundtrack</button>
+          <audio id="audio" src="{% static 'audio/got_soundtrack_main.mp3' %}" type="audio/mpeg"></audio>
+        </div>
+        <h3 class="display-3 fw-bold text-warning text-center mt-5">{% translate "gothapi" %}</h3>
+        <div>
+          <h5 class="display-6 text-center">An API for <em>Game of Thrones</em> TVSeries</h5>
+        </div>
+        <p class="text-center">
+          gothapi is an Open API providing all the data from the <em>Game of Thrones</em> TV series <br>
+          You can find details on resources and endpoints in the 
+          <a href="https://github.com/AEnyChris/gothapi/blob/master/README.md">Documentation</a><br>
+          Or if you're already eager to try it out then head below: 
+        </p>
       </div>
     </section>
     
-    <div class="request_on_page">
-      <h4 class="center display-6 p-2">
-           Take a stab at it!
-        </h4>
+    <div class="request_on_page rounded-4">
+      <h4 class="center fs-3 fw-normal m-3">Take a stab at it!</h4>
         <div class="input-group">
-              <span class="input-group-addon mx-auto" style="padding-right: 5px;">http://localhost:8000/api/</span>
-              <input id="interactive" type="text" class="form-control" placeholder="people/1/">
+              <span class="input-group-addon text-center fst-italic text-white-50 me-2">http://localhost:8000/api/</span>
+              <input id="interactive" type="text" class="form-control bg-secondary" placeholder="people/1/">
               <span class="input-group-btn"><button onclick="interactive_call();return false;" class="btn btn-primary">request</button></span>
         </div>
-        <small>Need a hint? try <a href="#" onclick="update('people/1/');return false;"><i>people/1/</i></a> or <a href="#" onclick="update('planets/3/');return false;"><i>planets/3/</i></a> or <a href="#" onclick="update('starships/9/');return false;"><i>starships/9/</i></a></small>
-        <p class="lead pad_top">Result:</p>
+        <small class="text-white-70">
+          Want something to try? click: 
+          <a href="#" onclick="update('people/1/');return false;"><i>people/1/</i></a> or 
+          <a href="#" onclick="update('houses/1/');return false;"><i>houses/1/</i></a> or 
+          <a href="#" onclick="update('dragons/1/');return false;"><i>dragons/1/</i></a> 
+          and hit the request button above
+        </small>
+        <p class="lead pad_top mt-5 fw-bold">Result:</p>
         <div>
-        <pre class="bg-white text-dark p-3" id="interactive_result">
+        <pre class="bg-white text-dark p-3 rounded-3" id="interactive_result" style="max-height: 500px; overflow-y: auto; border: 4px solid yellow;">
           Winter is coming!
         </pre>
         </div>
-    </div>
-    
-    <div class="div"></div>
-    <div style="height: 100vh" class="d-flex align-items-center justify-content-center">
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="card rounded-4 shadow">
-          <div class="card-header bg-warning rounded-top-4"></div>
-          <main class="card-body gap-4 p-5">
-          </main>
-          <div class="card-footer bg-danger rounded-bottom-4"></div>
-        </div>
-
-        <h1 class="display-4">People</h1>
-                <ul>
-                    {% for person in people %}
-                    <li>{{ person }}</li>
-                    {% endfor %}
-                </ul>
-      </div>
     </div>
   </body>
 {% endblock %}
@@ -290,7 +282,21 @@
     function update(url) {
       document.getElementById('interactive').value = url;
     }
+
+    const audio = document.getElementById('audio');
+    const button = document.getElementById('audioButton');
+
+    button.addEventListener('click', () => {
+        if (audio.paused) {
+            audio.play();
+            button.textContent = 'Pause soundtrack';
+        } else {
+            audio.pause();
+            button.textContent = 'Play soundtrack';
+        }
+    });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+  </script>
 {% endblock %}

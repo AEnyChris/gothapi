@@ -3,3 +3,4 @@ migrations/
 .gitignore
 run.sh
 *.pyc
+test.html
